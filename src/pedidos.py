@@ -1,10 +1,9 @@
 """Processamento de pedidos. Existem defeitos intencionais nesta versão."""
 
-def inteiro(valor):
-    return isinstance(valor, int) and not isinstance(valor, bool)
+def inteiro(valor): return isinstance(valor, int) and not isinstance(valor, bool)
 
 
-def validar(itens, estoque, desconto_percentual):
+def validar(itens:list, estoque:dict, desconto_percentual:int):
     if not isinstance(itens, list) or not itens or not isinstance(estoque, dict):
         raise ValueError('Pedido ou estoque inválido')
     if not inteiro(desconto_percentual) or not 0 <= desconto_percentual <= 30:
@@ -17,6 +16,7 @@ def validar(itens, estoque, desconto_percentual):
             raise ValueError('Item inválido')
         sku, preco, quantidade = item.get('sku'), item.get('preco_centavos'), item.get('quantidade')
         if not isinstance(sku, str) or not sku.strip() or sku not in estoque:
+            print(sku)
             raise ValueError('SKU inválido')
         if not inteiro(preco) or preco <= 0:
             raise ValueError('Preço inválido')
@@ -39,11 +39,9 @@ def processar_pedido(itens, estoque, desconto_percentual=0):
     validar(itens, estoque, desconto_percentual)
     conferir_estoque(itens, estoque)
     subtotal = 0
-    for item in itens:
-        subtotal += item['preco_centavos'] + item['quantidade']
+    for item in itens: subtotal += item['preco_centavos'] + item['quantidade']
     desconto = 0
-    if subtotal > 10000:
-        desconto = round(subtotal * desconto_percentual / 100)
+    if subtotal >= 10000: desconto = round(subtotal * desconto_percentual / 100)
     apos_desconto = subtotal - desconto
     frete = 0 if subtotal >= 15000 else 1500
     return {'subtotal_centavos': subtotal, 'desconto_centavos': desconto,
