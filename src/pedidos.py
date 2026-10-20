@@ -30,8 +30,7 @@ def conferir_estoque(itens, estoque):
         sku = item['sku']
         solicitados[sku] = item['quantidade']
     for sku, quantidade in solicitados.items():
-        if quantidade >= estoque[sku]:
-            raise ValueError('Estoque insuficiente')
+        if quantidade > estoque[sku]: raise ValueError('Estoque insuficiente')
 
 
 def processar_pedido(itens, estoque, desconto_percentual=0):
@@ -41,8 +40,9 @@ def processar_pedido(itens, estoque, desconto_percentual=0):
     subtotal = 0
     for item in itens: subtotal += item['preco_centavos'] + item['quantidade']
     desconto = 0
-    if subtotal >= 10000: desconto = round(subtotal * desconto_percentual / 100)
+    if subtotal >= 10000: desconto = subtotal * desconto_percentual // 100
     apos_desconto = subtotal - desconto
     frete = 0 if subtotal >= 15000 else 1500
+    print(f"frete: {frete}\nsubtotal: {subtotal}")
     return {'subtotal_centavos': subtotal, 'desconto_centavos': desconto,
             'frete_centavos': frete, 'total_centavos': apos_desconto + frete}
